@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import './App.css'
 
 const symbols = ['🌙', '⚡', '🎯', '🚀', '⭐', '🎲', '🎵', '💎']
-const GAME_TIME = 60
+const initialPlayers = [
+  { name: 'Player 1', score: 0 },
+  { name: 'Player 2', score: 0 },
+]
 
 function createDeck() {
   return [...symbols, ...symbols]
@@ -18,26 +21,11 @@ function App() {
   const [cards, setCards] = useState(() => createDeck())
   const [selectedIds, setSelectedIds] = useState([])
   const [moves, setMoves] = useState(0)
-  const [secondsLeft, setSecondsLeft] = useState(GAME_TIME)
   const [gameState, setGameState] = useState('playing')
   const [matchedPairs, setMatchedPairs] = useState(0)
-
-  useEffect(() => {
-    if (gameState !== 'playing') return
-
-    const timer = setInterval(() => {
-      setSecondsLeft((current) => {
-        if (current <= 1) {
-          clearInterval(timer)
-          setGameState('lost')
-          return 0
-        }
-        return current - 1
-      })
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [gameState])
+  const [players, setPlayers] = useState(initialPlayers)
+  const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0)
+  const [activeView, setActiveView] = useState('home')
 
   useEffect(() => {
     if (selectedIds.length !== 2) return
@@ -57,6 +45,12 @@ function App() {
         ),
       )
 
+      setPlayers((currentPlayers) =>
+        currentPlayers.map((player, index) =>
+          index === currentPlayerIndex ? { ...player, score: player.score + 10 } : player,
+        ),
+      )
+
       setMatchedPairs((current) => {
         const nextValue = current + 1
         if (nextValue >= symbols.length) {
@@ -71,18 +65,20 @@ function App() {
 
     const timeoutId = window.setTimeout(() => {
       setSelectedIds([])
+      setCurrentPlayerIndex((current) => (current + 1) % players.length)
     }, 700)
 
     return () => window.clearTimeout(timeoutId)
-  }, [selectedIds, cards])
+  }, [selectedIds, cards, currentPlayerIndex, players.length])
 
   function resetGame() {
     setCards(createDeck())
     setSelectedIds([])
     setMoves(0)
-    setSecondsLeft(GAME_TIME)
     setMatchedPairs(0)
     setGameState('playing')
+    setPlayers(initialPlayers)
+    setCurrentPlayerIndex(0)
   }
 
   function handleCardClick(card) {
@@ -93,14 +89,15 @@ function App() {
     setSelectedIds((current) => [...current, card.id])
   }
 
+  const highestScore = Math.max(...players.map((player) => player.score))
+  const winnerName = players.find((player) => player.score === highestScore)?.name
+
   const statusText =
     gameState === 'won'
-      ? 'You cleared the board!'
-      : gameState === 'lost'
-        ? 'Time is up!'
-        : 'Find every matching pair!'
+      ? `🎉 ${winnerName} wins with ${highestScore} points!`
+      : `${players[currentPlayerIndex].name}'s turn — find a match!`
 
-  return (
+  const renderGameView = () => (
     <div className="game-shell">
       <div className="game-header">
         <div>
@@ -110,6 +107,16 @@ function App() {
         <button type="button" className="restart-button" onClick={resetGame}>
           Restart
         </button>
+      </div>
+
+      <div className="players-panel">
+        {players.map((player, index) => (
+          <div key={player.name} className={`player-card ${index === currentPlayerIndex ? 'active' : ''}`}>
+            <span>{player.name}</span>
+            <strong>{player.score} pts</strong>
+            {index === currentPlayerIndex && gameState === 'playing' ? <small>Turn</small> : null}
+          </div>
+        ))}
       </div>
 
       <div className="stats-bar">
@@ -124,8 +131,8 @@ function App() {
           </strong>
         </div>
         <div className="stat">
-          <span>Time</span>
-          <strong>{secondsLeft}s</strong>
+          <span>Turn</span>
+          <strong>{players[currentPlayerIndex].name}</strong>
         </div>
       </div>
 
@@ -154,6 +161,75 @@ function App() {
         })}
       </div>
     </div>
+  )
+
+  const renderHomeView = () => (
+    <div className="panel-box landing-page">
+      <p className="eyebrow">Welcome to</p>
+      <h1>Memory Blast</h1>
+      <p className="landing-copy">
+        Match every glowing pair and beat your opponent in this fast, fun two-player puzzle challenge.
+      </p>
+      <button
+        type="button"
+        className="start-button"
+        onClick={() => {
+          resetGame()
+          setActiveView('game')
+        }}
+      >
+        Start Playing
+      </button>
+    </div>
+  )
+
+  const renderSettingsView = () => (
+    <div className="panel-box settings-page">
+      <p className="eyebrow">Game Settings</p>
+      <h2>Customize your match</h2>
+      <div className="settings-list">
+        <div className="setting-item">
+          <span>Players</span>
+          <strong>2 Players</strong>
+        </div>
+        <div className="setting-item">
+          <span>Theme</span>
+          <strong>Neon Arcade</strong>
+        </div>
+        <div className="setting-item">
+          <span>Mode</span>
+          <strong>Classic Match</strong>
+        </div>
+      </div>
+    </div>
+  )
+
+  return (
+    <>
+      {activeView === 'game' && (
+        <nav className="top-nav" aria-label="Main navigation">
+          <div className="nav-brand">Memory Blast</div>
+          <div className="nav-actions">
+            <button
+              type="button"
+              className={`nav-button ${activeView === 'home' ? 'active' : ''}`}
+              onClick={() => setActiveView('home')}
+            >
+              Home
+            </button>
+            <button
+              type="button"
+              className={`nav-button ${activeView === 'settings' ? 'active' : ''}`}
+              onClick={() => setActiveView('settings')}
+            >
+              Settings
+            </button>
+          </div>
+        </nav>
+      )}
+
+      {activeView === 'home' ? renderHomeView() : activeView === 'settings' ? renderSettingsView() : renderGameView()}
+    </>
   )
 }
 
