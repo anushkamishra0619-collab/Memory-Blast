@@ -6,7 +6,8 @@ const symbols = [<i class="fa-solid fa-face-smile"></i>,
 <i class="fa-solid fa-bomb"></i>,
 <i class="fa-solid fa-bicycle"></i>,
 <i class="fa-solid fa-plane"></i>,
-<i class="fa-sharp-duotone fa-solid fa-timer"></i>]
+<i class="fa-mosaic fa-solid fa-stopwatch"></i>,
+]
 const initialPlayers = [
   { name: 'Player 1', score: 0 },
   { name: 'Player 2', score: 0 },
@@ -55,7 +56,6 @@ function App() {
           index === currentPlayerIndex ? { ...player, score: player.score + 10 } : player,
         ),
       )
-
       setMatchedPairs((current) => {
         const nextValue = current + 1
         if (nextValue >= symbols.length) {
@@ -67,7 +67,6 @@ function App() {
       setSelectedIds([])
       return
     }
-
     const timeoutId = window.setTimeout(() => {
       setSelectedIds([])
       setCurrentPlayerIndex((current) => (current + 1) % players.length)
@@ -85,7 +84,6 @@ function App() {
     setPlayers(initialPlayers)
     setCurrentPlayerIndex(0)
   }
-
   function handleCardClick(card) {
     if (gameState !== 'playing') return
     if (card.matched || selectedIds.includes(card.id)) return
@@ -93,13 +91,11 @@ function App() {
 
     setSelectedIds((current) => [...current, card.id])
   }
-
   const highestScore = Math.max(...players.map((player) => player.score))
   const winnerName = players.find((player) => player.score === highestScore)?.name
-
   const statusText =
     gameState === 'won'
-      ? `🎉 ${winnerName} wins with ${highestScore} points!`
+      ? `${winnerName} wins with ${highestScore} points!`
       : `${players[currentPlayerIndex].name}'s turn — find a match!`
 
   const renderGameView = () => (
