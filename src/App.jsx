@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
-const symbols = ['🌙', '⚡', '🎯', '🚀', '⭐', '🎲', '🎵', '💎']
+const symbols = [<i class="fa-solid fa-face-smile"></i>,
+<i class="fa-solid fa-music"></i>,
+<i class="fa-solid fa-bomb"></i>,
+<i class="fa-solid fa-bicycle"></i>,
+<i class="fa-solid fa-plane"></i>,
+<i class="fa-sharp-duotone fa-solid fa-timer"></i>]
 const initialPlayers = [
   { name: 'Player 1', score: 0 },
   { name: 'Player 2', score: 0 },
