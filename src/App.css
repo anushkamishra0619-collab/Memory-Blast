@@ -38,7 +38,7 @@
 
 .nav-button.active,
 .nav-button:hover {
-  background: linear-gradient(135deg, rgba(125, 211, 252, 0.2), rgba(167, 139, 250, 0.22));
+  background: linear-gradient(135deg, rgba(225, 139, 47, 0.2), rgba(225, 223, 230, 0.22));
   border-color: rgba(125, 211, 252, 0.45);
 }
 
@@ -215,7 +215,7 @@ h1 {
 
 .stats-bar {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 18px;
 }
@@ -239,6 +239,10 @@ h1 {
 
 .stat strong {
   font-size: clamp(1.4rem, 2vw, 2rem);
+}
+
+.timer-stat strong {
+  color: #fcd34d;
 }
 
 .message-banner {
@@ -342,7 +346,7 @@ h1 {
   }
 
   .stats-bar {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .board {

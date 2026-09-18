@@ -3,18 +3,22 @@ import './App.css'
 
 const symbols = [<i class="fa-solid fa-face-smile"></i>,
 <i class="fa-solid fa-music"></i>,
-<i class="fa-solid fa-bomb"></i>,
 <i class="fa-solid fa-bicycle"></i>,
 <i class="fa-solid fa-plane"></i>,
-<i class="fa-mosaic fa-solid fa-stopwatch"></i>,
+<i class="fa-solid fa-skull-crossbones"></i>,
+]
+const powerUpCards = [
+  <i class="fa-mosaic fa-solid fa-stopwatch"></i>,
+  <i class="fa-solid fa-bomb"></i>,
 ]
 const initialPlayers = [
   { name: 'Player 1', score: 0 },
   { name: 'Player 2', score: 0 },
 ]
+const initialTime = 60
 
 function createDeck() {
-  return [...symbols, ...symbols]
+  return [...symbols, ...symbols, ...powerUpCards]
     .map((symbol, index) => ({
       id: `${symbol}-${index}-${Math.random().toString(16).slice(2)}`,
       symbol,
@@ -32,6 +36,23 @@ function App() {
   const [players, setPlayers] = useState(initialPlayers)
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0)
   const [activeView, setActiveView] = useState('home')
+  const [timeLeft, setTimeLeft] = useState(initialTime)
+
+  useEffect(() => {
+    if (activeView !== 'game' || gameState !== 'playing') return
+
+    const timerId = window.setInterval(() => {
+      setTimeLeft((currentTime) => {
+        if (currentTime <= 1) {
+          setGameState('lost')
+          return 0
+        }
+        return currentTime - 1
+      })
+    }, 1000)
+
+    return () => window.clearInterval(timerId)
+  }, [activeView, gameState])
 
   useEffect(() => {
     if (selectedIds.length !== 2) return
@@ -50,7 +71,6 @@ function App() {
           card.id === firstId || card.id === secondId ? { ...card, matched: true } : card,
         ),
       )
-
       setPlayers((currentPlayers) =>
         currentPlayers.map((player, index) =>
           index === currentPlayerIndex ? { ...player, score: player.score + 10 } : player,
@@ -72,7 +92,7 @@ function App() {
       setCurrentPlayerIndex((current) => (current + 1) % players.length)
     }, 700)
 
-    return () => window.clearTimeout(timeoutId)
+   return () => window.clearTimeout(timeoutId)
   }, [selectedIds, cards, currentPlayerIndex, players.length])
 
   function resetGame() {
@@ -83,11 +103,19 @@ function App() {
     setGameState('playing')
     setPlayers(initialPlayers)
     setCurrentPlayerIndex(0)
+    setTimeLeft(initialTime)
   }
   function handleCardClick(card) {
     if (gameState !== 'playing') return
     if (card.matched || selectedIds.includes(card.id)) return
     if (selectedIds.length === 2) return
+
+    const cardClassName = card.symbol.props.className || card.symbol.props.class || ''
+    if (cardClassName.includes('stopwatch')) {
+      setTimeLeft((currentTime) => currentTime + 20)
+    } else if (cardClassName.includes('bomb')) {
+      setTimeLeft((currentTime) => Math.max(0, currentTime - 20))
+    }
 
     setSelectedIds((current) => [...current, card.id])
   }
@@ -96,8 +124,10 @@ function App() {
   const statusText =
     gameState === 'won'
       ? `${winnerName} wins with ${highestScore} points!`
+      : gameState === 'lost'
+        ? 'Time is up! Restart to play again.'
       : `${players[currentPlayerIndex].name}'s turn — find a match!`
-
+  
   const renderGameView = () => (
     <div className="game-shell">
       <div className="game-header">
@@ -135,6 +165,10 @@ function App() {
           <span>Turn</span>
           <strong>{players[currentPlayerIndex].name}</strong>
         </div>
+        <div className="stat timer-stat">
+          <span>Time</span>
+          <strong>{timeLeft}s</strong>
+        </div>
       </div>
 
       <div className={`message-banner ${gameState}`}>{statusText}</div>
@@ -169,7 +203,7 @@ function App() {
       <p className="eyebrow">Welcome to</p>
       <h1>Memory Blast</h1>
       <p className="landing-copy">
-        Match every glowing pair and beat your opponent in this fast, fun two-player puzzle challenge.
+        Match every glowing pair and boost your learning power.
       </p>
       <button
         type="button"
@@ -191,7 +225,7 @@ function App() {
       <div className="settings-list">
         <div className="setting-item">
           <span>Players</span>
-          <strong>2 Players</strong>
+          <strong>2</strong>
         </div>
         <div className="setting-item">
           <span>Theme</span>
