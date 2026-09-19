@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
-const symbols = [<i class="fa-solid fa-face-smile"></i>,
-<i class="fa-solid fa-music"></i>,
-<i class="fa-solid fa-bicycle"></i>,
-<i class="fa-solid fa-plane"></i>,
-<i class="fa-solid fa-skull-crossbones"></i>,
+const symbols = [
+  { id: 'smile', symbol: <i className="fa-solid fa-face-smile" /> },
+  { id: 'music', symbol: <i className="fa-solid fa-music" /> },
+  { id: 'bicycle', symbol: <i className="fa-solid fa-bicycle" /> },
+  { id: 'plane', symbol: <i className="fa-solid fa-plane" /> },
+  { id: 'skull', symbol: <i className="fa-solid fa-skull-crossbones" /> },
 ]
 const powerUpCards = [
-  <i class="fa-mosaic fa-solid fa-stopwatch"></i>,
-  <i class="fa-solid fa-bomb"></i>,
+  { id: 'stopwatch', symbol: <i className="fa-mosaic fa-solid fa-stopwatch" /> },
+  { id: 'bomb', symbol: <i className="fa-solid fa-bomb" /> },
 ]
 const initialPlayers = [
   { name: 'Player 1', score: 0 },
@@ -18,15 +19,18 @@ const initialPlayers = [
 const initialTime = 60
 
 function createDeck() {
-  return [...symbols, ...symbols, ...powerUpCards]
-    .map((symbol, index) => ({
-      id: `${symbol}-${index}-${Math.random().toString(16).slice(2)}`,
-      symbol,
-      matched: false,
-    }))
-    .sort(() => Math.random() - 0.5)
-}
+  const deck = [...symbols, ...symbols, ...powerUpCards].map((card, index) => ({
+    ...card,
+    id: `${card.id}-${index}`,
+    matched: false,
+  }))
+  for (let i = deck.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[deck[i], deck[j]] = [deck[j], deck[i]]
+  }
 
+  return deck
+}
 function App() {
   const [cards, setCards] = useState(() => createDeck())
   const [selectedIds, setSelectedIds] = useState([])
@@ -110,7 +114,7 @@ function App() {
     if (card.matched || selectedIds.includes(card.id)) return
     if (selectedIds.length === 2) return
 
-    const cardClassName = card.symbol.props.className || card.symbol.props.class || ''
+    const cardClassName = card.symbol?.props?.className || card.symbol?.props?.class || ''
     if (cardClassName.includes('stopwatch')) {
       setTimeLeft((currentTime) => currentTime + 20)
     } else if (cardClassName.includes('bomb')) {
