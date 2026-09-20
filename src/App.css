@@ -271,6 +271,14 @@ h1 {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
+  padding: 20px;
+  border-radius: 24px;
+  background-image:
+    linear-gradient(rgba(2, 8, 23, 0.38), rgba(2, 8, 23, 0.38)),
+    url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUAFpBB1q9ASB9Koi88K0G2CtWHKI9juPsF9hd_8VQEA&s=10');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .memory-card {
@@ -316,6 +324,71 @@ h1 {
   background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
   color: #eff6ff;
   box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.18);
+}
+
+.memory-card:nth-child(1) .card-front {
+  background-color: #3b1018;
+  background-image: repeating-linear-gradient(45deg, rgba(248, 113, 113, 0.3) 0 2px, transparent 2px 10px);
+}
+
+.memory-card:nth-child(2) .card-front {
+  background-color: #3b1f0f;
+  background-image: radial-gradient(rgba(251, 146, 60, 0.4) 1.5px, transparent 1.5px);
+  background-size: 12px 12px;
+}
+
+.memory-card:nth-child(3) .card-front {
+  background-color: #382d08;
+  background-image: repeating-linear-gradient(0deg, rgba(250, 204, 21, 0.28) 0 2px, transparent 2px 9px);
+}
+
+.memory-card:nth-child(4) .card-front {
+  background-color: #0d351c;
+  background-image: repeating-linear-gradient(135deg, rgba(74, 222, 128, 0.28) 0 3px, transparent 3px 12px);
+}
+
+.memory-card:nth-child(5) .card-front {
+  background-color: #083532;
+  background-image: radial-gradient(circle at 25% 25%, rgba(45, 212, 191, 0.4) 0 2px, transparent 2px 8px);
+  background-size: 16px 16px;
+}
+
+.memory-card:nth-child(6) .card-front {
+  background-color: #073342;
+  background-image: repeating-linear-gradient(90deg, rgba(34, 211, 238, 0.28) 0 2px, transparent 2px 11px);
+}
+
+.memory-card:nth-child(7) .card-front {
+  background-color: #102b54;
+  background-image: linear-gradient(135deg, rgba(96, 165, 250, 0.32) 25%, transparent 25% 75%, rgba(96, 165, 250, 0.32) 75%);
+  background-size: 18px 18px;
+}
+
+.memory-card:nth-child(8) .card-front {
+  background-color: #21194d;
+  background-image: repeating-linear-gradient(45deg, rgba(129, 140, 248, 0.3) 0 2px, transparent 2px 7px, rgba(129, 140, 248, 0.3) 7px 9px, transparent 9px 14px);
+}
+
+.memory-card:nth-child(9) .card-front {
+  background-color: #32154d;
+  background-image: radial-gradient(rgba(192, 132, 252, 0.35) 2px, transparent 2px);
+  background-size: 9px 9px;
+}
+
+.memory-card:nth-child(10) .card-front {
+  background-color: #45143f;
+  background-image: repeating-linear-gradient(135deg, rgba(232, 121, 249, 0.3) 0 2px, transparent 2px 8px);
+}
+
+.memory-card:nth-child(11) .card-front {
+  background-color: #49152f;
+  background-image: linear-gradient(rgba(244, 114, 182, 0.25) 2px, transparent 2px), linear-gradient(90deg, rgba(244, 114, 182, 0.25) 2px, transparent 2px);
+  background-size: 12px 12px;
+}
+
+.memory-card:nth-child(12) .card-front {
+  background-color: #431722;
+  background-image: repeating-linear-gradient(0deg, rgba(251, 113, 133, 0.3) 0 2px, transparent 2px 6px);
 }
 
 .card-back {
